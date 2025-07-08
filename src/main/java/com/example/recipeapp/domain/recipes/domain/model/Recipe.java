@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE recipe SET is_deleted = true, deleted_at = CURRENT_TIMESTAMP WHERE recipe_id = ?")
 @Where(clause = "is_deleted = false")
-public class Recipe extends BaseEntity {
+public class Recipe extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recipe_id")

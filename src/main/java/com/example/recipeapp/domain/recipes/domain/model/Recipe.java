@@ -1,5 +1,6 @@
 package com.example.recipeapp.domain.recipes.domain.model;
 import com.example.recipeapp.domain.user.domain.model.User;
+import com.example.recipeapp.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE recipe SET is_deleted = true, deleted_at = CURRENT_TIMESTAMP WHERE recipe_id = ?")
 @Where(clause = "is_deleted = false")
-public class Recipe {
+public class Recipe extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recipe_id")
@@ -40,21 +42,8 @@ public class Recipe {
 
     private int likes = 0;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     private boolean isDeleted = false;
     private LocalDateTime deletedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = this.createdAt;
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
 
     @Builder
     public Recipe(User user, String title, String content, String category, String imageUrl) {

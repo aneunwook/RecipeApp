@@ -2,17 +2,16 @@ package com.example.recipeapp.domain.user.domain.model;
 
 import com.example.recipeapp.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 public class User extends BaseTimeEntity {
 
     @Id
@@ -30,9 +29,11 @@ public class User extends BaseTimeEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
+    @Builder.Default
     private UserRoleEnum role = UserRoleEnum.USER;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean isDeleted = false;
 
     private LocalDateTime deletedAt;

@@ -21,9 +21,10 @@ public class AuthService {
 
     public RegisterResponseDto register(SaveUserDto saveUserDto) {
 
-        checkDuplicatesOrThrow(saveUserDto.getEmail());
+        checkDuplicatesOrThrow(saveUserDto.getNickname(), saveUserDto.getEmail());
 
         User user = User.builder()
+                        .nickname(saveUserDto.getNickname())
                         .username(saveUserDto.getUsername())
                         .email(saveUserDto.getEmail())
                         .password(passwordEncoder.encode(saveUserDto.getPassword()))
@@ -34,7 +35,12 @@ public class AuthService {
         return RegisterResponseDto.from(savedUser);
     }
 
-    private void checkDuplicatesOrThrow(String email) {
+    private void checkDuplicatesOrThrow(String nickname, String email) {
+
+        boolean hasDuplicateNickname = userRepository.existsByNickname(nickname);
+        if (hasDuplicateNickname) {
+            throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
+        }
 
         boolean hasDuplicateEmail = userRepository.existsByEmail(email);
         if (hasDuplicateEmail) {

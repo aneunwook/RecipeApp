@@ -10,6 +10,7 @@ import lombok.Getter;
 public class RegisterResponseDto {
 
     private Long id;
+    private String nickname;
     private String username;
     private String email;
     private String role;
@@ -18,6 +19,7 @@ public class RegisterResponseDto {
     public static RegisterResponseDto from(User user) {
         return RegisterResponseDto.builder()
                                   .id(user.getId())
+                                  .nickname(user.getNickname())
                                   .username(user.getUsername())
                                   .email(user.getEmail())
                                   .role(user.getRole().getRole())

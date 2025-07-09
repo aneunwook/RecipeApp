@@ -10,7 +10,11 @@ import lombok.Getter;
 public class RegisterRequestDto {
 
     @NotBlank
-    @Pattern(regexp = "^[가-힣a-zA-Z]{4,20}$", message = "4-20자의 한글 또는 영문을 입력해주세요.")
+    @Pattern(regexp = "^[가-힣a-zA-Z0-9]{2,10}$", message = "닉네임은 2-10자로 한글, 영어, 숫자로 조합되어야 합니다.")
+    private String nickname;
+
+    @NotBlank
+    @Pattern(regexp = "^[가-힣a-zA-Z]{2,10}$", message = "이름은 2-10자의 한글 또는 영문을 입력해주세요.")
     private String username;
 
     @NotBlank
@@ -18,14 +22,15 @@ public class RegisterRequestDto {
     private String email;
 
     @NotBlank
-    @Pattern(regexp = "^[a-zA-Z0-9]{8,15}$", message = "비밀번호는 8-15자로 영문과 숫자를 포함해야 합니다.")
+    @Pattern(regexp = "^[a-zA-Z0-9]{8,15}$", message = "비밀번호는 8-15자로 영문과 숫자로 조합되어야 합니다.")
     private String password;
 
-    public static SaveUserDto toSaveUserDto(RegisterRequestDto requestDto) {
+    public static SaveUserDto toSaveUserDto(RegisterRequestDto registerRequestDto) {
         return SaveUserDto.builder()
-                          .username(requestDto.getUsername())
-                          .email(requestDto.getEmail())
-                          .password(requestDto.getPassword())
+                          .nickname(registerRequestDto.getNickname())
+                          .username(registerRequestDto.getUsername())
+                          .email(registerRequestDto.getEmail())
+                          .password(registerRequestDto.getPassword())
                           .build();
     }
 

@@ -7,6 +7,8 @@ import lombok.Getter;
 @Getter
 public class SaveUserDto {
 
+    private String nickname;
+
     private String username;
 
     private String email;

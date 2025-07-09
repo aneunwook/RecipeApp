@@ -14,7 +14,7 @@ public class LikeService {
     private final UserRepository userRepository;
 
 
-    //좋아요 등록
+    //좋아요 등록 (좋아요가 눌리지 않은 상태만 가능)
     public void registerLike (Long userId, Long recipeId) {
 
         User user = getUserById(userId);  //좋아요 누른 사람 ID, (로그인된)요청한 사용자
@@ -33,7 +33,7 @@ public class LikeService {
     }
 
 
-    //좋아요 취소
+    //좋아요 취소 (좋아요가 눌려있는 상태만 가능)
     public void cancelLike (Long userId, Long recipeId) {
 
         User user = getUserById(userId);  //좋아요 누른 사람 ID
@@ -53,7 +53,7 @@ public class LikeService {
     public Long countLikes (Long recipeId) {
 
         Recipe recipe = getRecipeById(recipeId);  // 게시글 존재 여부 확인
-        return likeRepository.countByPost(recipe);
+        return likeRepository.countByRecipe(recipe);
 
     }
 

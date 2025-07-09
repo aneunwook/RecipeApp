@@ -1,4 +1,4 @@
-package com.example.recipeapp.domain.auth.service.dto.response;
+package com.example.recipeapp.domain.auth.controller.dto.response;
 
 import com.example.recipeapp.domain.user.domain.model.User;
 import java.time.LocalDateTime;

@@ -38,8 +38,8 @@ public class AuthController {
     public ResponseEntity<ApiResponse<LoginResponseDto>> login(
         @Valid @RequestBody LoginRequestDto loginRequestDto) {
 
-        LoginResponseDto responseDto = authService.login(loginRequestDto);
-        ApiResponse<LoginResponseDto> response = ApiResponse.success("로그인에 성공했습니다.", responseDto);
+        LoginResponseDto loginResponseDto = authService.login(loginRequestDto);
+        ApiResponse<LoginResponseDto> response = ApiResponse.success("로그인에 성공했습니다.", loginResponseDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

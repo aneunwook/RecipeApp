@@ -14,10 +14,10 @@ public class Likes {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private User user; // 좋아요 누른 사람
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Post post; // 좋아요 대상 게시글
+    private Recipe recipe; // 좋아요 대상 게시글
 
     private LocalDateTime createdAt;
 

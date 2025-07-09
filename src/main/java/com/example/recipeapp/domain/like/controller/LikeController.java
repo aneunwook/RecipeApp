@@ -11,14 +11,15 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class LikeController {
 
     private final LikeService likeService;
 
     //좋아요 등록
-    @PostMapping
+    @PostMapping("/recipes/{recipeId}/likes")
     public ResponseEntity<ApiResponse<LikeResponseDto>> registerLike(
-            @RequestParam Long recipeId,
+            @PathVariable Long recipeId,
             @AuthenticationPrincipal User user) {  //로그인된 사용자 정보
 
         LikeResponseDto response = likeService.registerLike(user.getId(), recipeId);
@@ -26,9 +27,9 @@ public class LikeController {
     }
 
     // 좋아요 취소
-    @DeleteMapping
+    @DeleteMapping("/recipes/{recipeId}/likes")
     public ResponseEntity<ApiResponse<LikeResponseDto>> cancelLike(
-            @RequestParam Long recipeId,
+            @PathVariable Long recipeId,
             @AuthenticationPrincipal User user) {
 
         LikeResponseDto response = likeService.cancelLike(user.getId(), recipeId);
@@ -36,9 +37,9 @@ public class LikeController {
     }
 
     // 좋아요 개수 조회 (로그인 사용자만 가능)
-    @GetMapping("/count")
+    @GetMapping("/recipes/{recipeId}/likes/count")
     public ResponseEntity<ApiResponse<LikeCountResponseDto>> countLikes(
-            @RequestParam Long recipeId,
+            @PathVariable Long recipeId,
             @AuthenticationPrincipal User user) {
 
         LikeCountResponseDto response = likeService.countLikes(recipeId);

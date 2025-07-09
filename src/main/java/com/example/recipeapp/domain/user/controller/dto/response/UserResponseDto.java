@@ -23,7 +23,7 @@ public class UserResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static UserResponseDto toDto(User user){
+    public static UserResponseDto from(User user){
         return UserResponseDto.builder()
                 .id(user.getId())
                 .nickname(user.getNickname())

@@ -23,8 +23,8 @@ public class RecipeService {
 
     /** CREATE */
     @Transactional
-    public Long create(Long userId, CreateRecipeRequestDto requestDto){
-        User user = userRepository.findById(userId)
+    public Long create(CreateRecipeRequestDto requestDto){
+        User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,"작성자 없음"));
 
         Recipe recipe = Recipe.builder()

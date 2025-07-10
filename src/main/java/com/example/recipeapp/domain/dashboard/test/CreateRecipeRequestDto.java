@@ -6,6 +6,9 @@ import lombok.Getter;
 
 @Getter
 public class CreateRecipeRequestDto {
+
+    @NotNull
+    private Long userId;
     @NotBlank
     private String title;
     @NotBlank

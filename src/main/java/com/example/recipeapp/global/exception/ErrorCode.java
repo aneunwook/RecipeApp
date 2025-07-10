@@ -19,8 +19,12 @@ public enum ErrorCode {
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
 
-    // 게시글 관련 에러 정의
-    TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시글입니다.");
+    // Recipe 게시글 관련
+    RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 레시피입니다."),
+
+    // 좋아요 관련
+    LIKE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 좋아요를 누른 게시글입니다."),
+    LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "좋아요를 누른 적이 없는 게시글입니다.");
 
     private final HttpStatus status;
     private final String message;

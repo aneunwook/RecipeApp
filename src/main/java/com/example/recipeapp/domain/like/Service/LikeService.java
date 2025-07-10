@@ -5,8 +5,11 @@ import com.example.recipeapp.domain.like.controller.dto.LikeResponseDto;
 import com.example.recipeapp.domain.like.domain.model.entity.Likes;
 import com.example.recipeapp.domain.like.domain.repository.LikeRepository;
 import com.example.recipeapp.domain.recipes.domain.model.Recipe;
+import com.example.recipeapp.domain.recipes.domain.repository.RecipeRepository;
 import com.example.recipeapp.domain.user.domain.model.User;
 import com.example.recipeapp.domain.user.domain.repository.UserRepository;
+import com.example.recipeapp.global.exception.CustomException;
+import com.example.recipeapp.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -54,14 +57,14 @@ public class LikeService {
     public LikeResponseDto cancelLike (Long userId, Long recipeId) {
 
         User user = userRepository.findById(userId)  ///좋아요 누른 사람 ID
-                .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Recipe recipe = recipeRepository.findById(recipeId)  //게시글ID로 실제 DB에 존재하는 레시피게시글 객체를 가져오기
-                .orElseThrow(() -> new NoSuchElementException("레시피를 찾을 수 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.RECIPE_NOT_FOUND));
 
         // 이 유저가 이 게시글에 눌렀던 좋아요 엔티티 찾기, 나중에 커스텀예외로 분리
         Likes like = likeRepository.findByUserAndRecipe(user, recipe)
-                .orElseThrow(() -> new NoSuchElementException("좋아요를 누른 적이 없는 게시글입니다.")); //값이 존재하지 않아 꺼낼 수 없을 때 사용하는 예외클래스
+                .orElseThrow(() -> new CustomException(ErrorCode.LIKE_NOT_FOUND)); //값이 존재하지 않아 꺼낼 수 없을 때 사용하는 예외클래스
 
         // 좋아요 삭제
         likeRepository.delete(like);
@@ -81,7 +84,7 @@ public class LikeService {
     public LikeCountResponseDto countLikes (Long recipeId) {
 
         Recipe recipe = recipeRepository.findById(recipeId)  //게시글 존재 여부 확인
-                .orElseThrow(() -> new NoSuchElementException("레시피를 찾을 수 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.RECIPE_NOT_FOUND));
 
         long likeCount = likeRepository.countByRecipe(recipe);
 

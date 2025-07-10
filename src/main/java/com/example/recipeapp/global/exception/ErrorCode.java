@@ -20,7 +20,10 @@ public enum ErrorCode {
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
 
     // 게시글 관련 에러 정의
-    TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시글입니다.");
+    TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시글입니다."),
+
+    //대시보드 관련 에러 정의
+    DASHBOARD_TOPRECIPE_NOT_FOUND(HttpStatus.NOT_FOUND,"레시피가 존재 하지 않습니다.");
 
     private final HttpStatus status;
     private final String message;

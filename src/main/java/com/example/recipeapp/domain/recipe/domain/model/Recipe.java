@@ -1,4 +1,5 @@
-package com.example.recipeapp.domain.recipes.domain.model;
+package com.example.recipeapp.domain.recipe.domain.model;
+import com.example.recipeapp.domain.dashboard.test.TestRecipeCategoryEnum;
 import com.example.recipeapp.domain.user.domain.model.User;
 import com.example.recipeapp.global.entity.BaseTimeEntity;
 
@@ -35,8 +36,9 @@ public class Recipe extends BaseTimeEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String category;
+    private TestRecipeCategoryEnum category;
 
     private String imageUrl;
 
@@ -46,7 +48,7 @@ public class Recipe extends BaseTimeEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    public Recipe(User user, String title, String content, String category, String imageUrl) {
+    public Recipe(User user, String title, String content, TestRecipeCategoryEnum category, String imageUrl) {
         this.user = user;
         this.title = title;
         this.content = content;
@@ -54,7 +56,7 @@ public class Recipe extends BaseTimeEntity {
         this.imageUrl = imageUrl;
     }
 
-    public void update(String title, String content, String category, String imageUrl) {
+    public void update(String title, String content, TestRecipeCategoryEnum category, String imageUrl) {
         this.title = title;
         this.content = content;
         this.category = category;
@@ -67,5 +69,8 @@ public class Recipe extends BaseTimeEntity {
 
     public void decreaseLikes() {
         this.likes = Math.max(0, this.likes - 1);
+    }
+
+    public void minusLike() {
     }
 }

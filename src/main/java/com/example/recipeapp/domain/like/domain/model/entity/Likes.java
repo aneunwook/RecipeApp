@@ -1,13 +1,22 @@
 package com.example.recipeapp.domain.like.domain.model.entity;
 
+import com.example.recipeapp.domain.recipe.domain.model.Recipe;
+import com.example.recipeapp.domain.user.domain.model.User;
+import com.example.recipeapp.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
+import static lombok.AccessLevel.PROTECTED;
 
 @Entity
-@Table(name = "likes")
-public class Likes {
+@Table(name="likes",
+        uniqueConstraints=@UniqueConstraint(columnNames={"user_id","recipe_id"}))
+@Getter
+@NoArgsConstructor(access = PROTECTED)
+public class Likes extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +28,10 @@ public class Likes {
     @ManyToOne(fetch = FetchType.LAZY)
     private Recipe recipe; // 좋아요 대상 게시글
 
-    private LocalDateTime createdAt;
+    @Builder
+    private Likes(User user,Recipe recipe) {
+        this.user = user;
+        this.recipe = recipe;
+    }
 
 }

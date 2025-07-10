@@ -2,10 +2,13 @@ package com.example.recipeapp.domain.like.domain.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.example.recipeapp.domain.recipes.domain.model.Recipe;
+import com.example.recipeapp.domain.user.domain.model.User;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
 @Table(
         name = "likes",
         uniqueConstraints = {
@@ -25,5 +28,10 @@ public class Likes {
     private Recipe recipe; // 좋아요 대상 게시글
 
     private LocalDateTime createdAt;
+
+    public Likes(User user, Recipe recipe) {
+        this.user = user;
+        this.recipe = recipe;
+    }
 
 }

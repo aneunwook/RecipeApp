@@ -1,5 +1,7 @@
 package com.example.recipeapp.domain.like.Service;
 
+import com.example.recipeapp.domain.like.controller.dto.LikeCountResponseDto;
+import com.example.recipeapp.domain.like.controller.dto.LikeResponseDto;
 import com.example.recipeapp.domain.like.domain.model.entity.Likes;
 import com.example.recipeapp.domain.like.domain.repository.LikeRepository;
 import com.example.recipeapp.domain.recipes.domain.model.Recipe;
@@ -7,6 +9,8 @@ import com.example.recipeapp.domain.user.domain.model.User;
 import com.example.recipeapp.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +22,7 @@ public class LikeService {
 
 
     //좋아요 등록 (좋아요가 눌리지 않은 상태만 가능)
-    public void registerLike (Long userId, Long recipeId) {
+    public LikeResponseDto registerLike (Long userId, Long recipeId) {
 
         User user = userRepository.findById(userId)  ///좋아요 누른 사람 ID, (로그인된)요청한 사용자
         .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
@@ -35,11 +39,19 @@ public class LikeService {
         Likes like = new Likes(user, recipe);
         likeRepository.save(like);
 
+        long likeCount = likeRepository.countByRecipe(recipe);
+
+        return LikeResponseDto.builder()
+                .recipeId(recipeId)
+                .likesCount(likeCount)
+                .liked(true) //등록이므로 true
+                .build();
+
     }
 
 
     //좋아요 취소 (좋아요가 눌려있는 상태만 가능)
-    public void cancelLike (Long userId, Long recipeId) {
+    public LikeResponseDto cancelLike (Long userId, Long recipeId) {
 
         User user = userRepository.findById(userId)  ///좋아요 누른 사람 ID
                 .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
@@ -54,16 +66,29 @@ public class LikeService {
         // 좋아요 삭제
         likeRepository.delete(like);
 
+        long likeCount = likeRepository.countByRecipe(recipe);
+
+        return LikeResponseDto.builder()
+                .recipeId(recipeId)
+                .likesCount(likeCount)
+                .liked(false) // 취소이므로 false
+                .build();
+
     }
 
 
     //좋아요 수 조회
-    public Long countLikes (Long recipeId) {
+    public LikeCountResponseDto countLikes (Long recipeId) {
 
         Recipe recipe = recipeRepository.findById(recipeId)  //게시글 존재 여부 확인
                 .orElseThrow(() -> new NoSuchElementException("레시피를 찾을 수 없습니다"));
 
-        return likeRepository.countByRecipe(recipe);
+        long likeCount = likeRepository.countByRecipe(recipe);
+
+        return LikeCountResponseDto.builder()
+                .recipeId(recipeId)
+                .likesCount(likeCount)
+                .build();
 
     }
 

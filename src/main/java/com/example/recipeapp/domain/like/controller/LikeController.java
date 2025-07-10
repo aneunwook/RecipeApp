@@ -1,5 +1,6 @@
 package com.example.recipeapp.domain.like.controller;
 
+import com.example.recipeapp.domain.auth.domain.model.AuthUser;
 import com.example.recipeapp.domain.like.Service.LikeService;
 import com.example.recipeapp.domain.like.controller.dto.LikeCountResponseDto;
 import com.example.recipeapp.domain.like.controller.dto.LikeResponseDto;
@@ -20,9 +21,9 @@ public class LikeController {
     @PostMapping("/recipes/{recipeId}/likes")
     public ResponseEntity<ApiResponse<LikeResponseDto>> registerLike(
             @PathVariable Long recipeId,
-            @AuthenticationPrincipal User user) {  //로그인된 사용자 정보
+            @AuthenticationPrincipal AuthUser authUser) {  //로그인된 사용자 정보
 
-        LikeResponseDto response = likeService.registerLike(user.getId(), recipeId);
+        LikeResponseDto response = likeService.registerLike(authUser.getId(), recipeId);
         return ResponseEntity.ok(ApiResponse.success("좋아요 등록 완료", response));
     }
 
@@ -30,17 +31,15 @@ public class LikeController {
     @DeleteMapping("/recipes/{recipeId}/likes")
     public ResponseEntity<ApiResponse<LikeResponseDto>> cancelLike(
             @PathVariable Long recipeId,
-            @AuthenticationPrincipal User user) {
+            @AuthenticationPrincipal AuthUser authUser) {
 
-        LikeResponseDto response = likeService.cancelLike(user.getId(), recipeId);
+        LikeResponseDto response = likeService.cancelLike(authUser.getId(), recipeId);
         return ResponseEntity.ok(ApiResponse.success("좋아요 취소 완료", response));
     }
 
     // 좋아요 개수 조회 (로그인 사용자만 가능)
     @GetMapping("/recipes/{recipeId}/likes/count")
-    public ResponseEntity<ApiResponse<LikeCountResponseDto>> countLikes(
-            @PathVariable Long recipeId,
-            @AuthenticationPrincipal User user) {
+    public ResponseEntity<ApiResponse<LikeCountResponseDto>> countLikes(@PathVariable Long recipeId) {
 
         LikeCountResponseDto response = likeService.countLikes(recipeId);
         return ResponseEntity.ok(ApiResponse.success("좋아요 개수 조회 성공", response));

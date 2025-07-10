@@ -2,6 +2,8 @@ package com.example.recipeapp.domain.like.domain.repository;
 
 import com.example.recipeapp.domain.like.domain.model.entity.Likes;
 import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.recipeapp.domain.recipes.domain.model.Recipe;
+import com.example.recipeapp.domain.user.domain.model.User;
 
 import java.util.Optional;
 

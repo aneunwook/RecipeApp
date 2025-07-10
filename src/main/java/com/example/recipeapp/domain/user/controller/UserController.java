@@ -1,7 +1,6 @@
 package com.example.recipeapp.domain.user.controller;
 
 import com.example.recipeapp.domain.user.controller.dto.PasswordChangeRequest;
-import com.example.recipeapp.domain.user.controller.dto.response.UserListResponseDto;
 import com.example.recipeapp.domain.user.controller.dto.response.UserResponseDto;
 import com.example.recipeapp.domain.user.service.UserService;
 import com.example.recipeapp.global.response.ApiResponse;
@@ -28,18 +27,11 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<UserListResponseDto>> getAllUsers(
+    public ResponseEntity<ApiResponse<Page<UserResponseDto>>> getAllUsers(
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
 
-        UserListResponseDto users = userService.getAllUsers(pageable);
+        Page<UserResponseDto> users = userService.getAllUsers(pageable);
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("회원 전체 조회에 성공했습니다.", users));
     }
-
-//    @PatchMapping("/me")
-//    public ResponseEntity<ApiResponse<Void>> changePassword(@Valid PasswordChangeRequest request){
-//        userService.changePassword(request);
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("비밀번호 변경에 성공했습니다.", null));
-//    }
 }

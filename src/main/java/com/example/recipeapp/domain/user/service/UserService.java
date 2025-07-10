@@ -1,6 +1,5 @@
 package com.example.recipeapp.domain.user.service;
 
-import com.example.recipeapp.domain.user.controller.dto.response.UserListResponseDto;
 import com.example.recipeapp.domain.user.controller.dto.response.UserResponseDto;
 import com.example.recipeapp.domain.user.domain.model.User;
 import com.example.recipeapp.domain.user.domain.repository.UserRepository;
@@ -18,7 +17,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserListResponseDto getAllUsers(Pageable pageable) {
+    public Page<UserResponseDto> getAllUsers(Pageable pageable) {
 
         Page<User> users = userRepository.findAllByIsDeletedFalse(pageable);
 
@@ -26,9 +25,7 @@ public class UserService {
                                                 .map(UserResponseDto::from)
                                                 .toList();
 
-        return UserListResponseDto.from(
-                new PageImpl<>(userResponseDtos, pageable, users.getTotalElements()));
+        return new PageImpl<>(userResponseDtos, pageable, users.getTotalElements());
     }
-
 
 }

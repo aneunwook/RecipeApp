@@ -2,6 +2,7 @@ package com.example.recipeapp.domain.auth.service;
 
 import com.example.recipeapp.domain.auth.controller.dto.request.LoginRequestDto;
 import com.example.recipeapp.domain.auth.controller.dto.response.LoginResponseDto;
+import com.example.recipeapp.domain.auth.service.dto.request.DeleteUserDto;
 import com.example.recipeapp.domain.auth.service.dto.request.SaveUserDto;
 import com.example.recipeapp.domain.auth.controller.dto.response.RegisterResponseDto;
 import com.example.recipeapp.domain.user.domain.model.User;
@@ -58,6 +59,24 @@ public class AuthService {
 
         return new LoginResponseDto(token);
     }
+
+    public void withdraw(DeleteUserDto deleteUserDto) {
+
+        User withdrawUser = userRepository.findById(deleteUserDto.getUserId())
+                                  .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (withdrawUser.getIsDeleted()) {
+            throw new CustomException(ErrorCode.ALREADY_WITHDRAW_USER);
+        }
+
+        if (!passwordEncoder.matches(deleteUserDto.getPassword(), withdrawUser.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        withdrawUser.delete();
+    }
+
+
 
     private void checkDuplicatesOrThrow(String nickname, String email) {
 

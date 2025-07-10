@@ -15,6 +15,7 @@ public enum ErrorCode {
 
     // 유저 관련 에러 정의
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
+    ALREADY_WITHDRAW_USER(HttpStatus.BAD_REQUEST, "이미 회원탈퇴된 유저입니다."),
     DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다."),
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),

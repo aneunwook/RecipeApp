@@ -37,12 +37,21 @@ public class LikeController {
         return ResponseEntity.ok(ApiResponse.success("좋아요 취소 완료", response));
     }
 
-    // 좋아요 개수 조회 (로그인 사용자만 가능)
+    // V1 (캐시미적용) 좋아요 개수 조회 (로그인 사용자만 가능)
     @GetMapping("/recipes/{recipeId}/likes/count")
     public ResponseEntity<ApiResponse<LikeCountResponseDto>> countLikes(@PathVariable Long recipeId) {
 
         LikeCountResponseDto response = likeService.countLikes(recipeId);
         return ResponseEntity.ok(ApiResponse.success("좋아요 개수 조회 성공", response));
+    }
+
+    // V2 (캐시적용) 좋아요 개수 조회 (로그인 사용자만 가능)
+    @GetMapping("/api/v2/recipes/{recipeId}/likes/count")
+    public ResponseEntity<ApiResponse<LikeCountResponseDto>> countLikesV2(@PathVariable Long recipeId) {
+
+        LikeCountResponseDto response = likeService.countLikesV2(recipeId);
+        return ResponseEntity.ok(ApiResponse.success("좋아요 수 조회(v2 - Cacheable)", response)
+        );
     }
 
 

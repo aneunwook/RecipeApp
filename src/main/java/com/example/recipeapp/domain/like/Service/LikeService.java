@@ -10,10 +10,11 @@ import com.example.recipeapp.domain.user.domain.model.User;
 import com.example.recipeapp.domain.user.domain.repository.UserRepository;
 import com.example.recipeapp.global.exception.CustomException;
 import com.example.recipeapp.global.exception.ErrorCode;
+import org.springframework.cache.annotation.Cacheable;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -25,17 +26,18 @@ public class LikeService {
 
 
     //좋아요 등록 (좋아요가 눌리지 않은 상태만 가능)
+    @CacheEvict(value = "likeCount", key = "#recipeId") //캐시무효화
     public LikeResponseDto registerLike (Long userId, Long recipeId) {
 
         User user = userRepository.findById(userId)  ///좋아요 누른 사람 ID, (로그인된)요청한 사용자
-        .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Recipe recipe = recipeRepository.findById(recipeId)  //게시글ID로 실제 DB에 존재하는 레시피게시글 객체를 가져오기
-                .orElseThrow(() -> new NoSuchElementException("레시피를 찾을 수 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.RECIPE_NOT_FOUND));
 
         //예외 (중복 좋아요 방지), 나중에 커스텀예외로 분리
         if (likeRepository.findByUserAndRecipe(user, recipe).isPresent()) {
-            throw new IllegalStateException("이미 좋아요를 누른 게시글입니다.");
+            throw new CustomException(ErrorCode.LIKE_ALREADY_EXISTS);
         }
 
         //좋아요 생성, 저장
@@ -54,6 +56,7 @@ public class LikeService {
 
 
     //좋아요 취소 (좋아요가 눌려있는 상태만 가능)
+    @CacheEvict(value = "likeCount", key = "#recipeId")  //캐시무효화
     public LikeResponseDto cancelLike (Long userId, Long recipeId) {
 
         User user = userRepository.findById(userId)  ///좋아요 누른 사람 ID
@@ -93,6 +96,16 @@ public class LikeService {
                 .likesCount(likeCount)
                 .build();
 
+    }
+
+    //좋아요 수 조회 (캐시 적용)
+    @Cacheable(value = "likeCount", key = "#recipeId")
+    public LikeCountResponseDto countLikesV2(Long recipeId) {
+        Recipe recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RECIPE_NOT_FOUND));
+
+        long count = likeRepository.countByRecipe(recipe);
+        return new LikeCountResponseDto(recipeId, count);
     }
 
 }

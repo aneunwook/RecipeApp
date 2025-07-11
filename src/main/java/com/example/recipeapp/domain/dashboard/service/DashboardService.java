@@ -53,6 +53,9 @@ public class DashboardService {
 
     }
 
+//    public DashboardResponseDto dashboardsV2() {
+//    }
+
     /**
      * 카테고리 TOP_RECIPE 조회 로직
      * @param category
@@ -100,4 +103,6 @@ public class DashboardService {
                 .build();
 
     }
+
+
 }

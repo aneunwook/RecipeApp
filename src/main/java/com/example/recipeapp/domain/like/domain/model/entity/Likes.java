@@ -12,8 +12,7 @@ import lombok.RequiredArgsConstructor;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
-@Table(name="likes",
-        uniqueConstraints=@UniqueConstraint(columnNames={"user_id","recipe_id"}))
+@Table(name="likes")
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 public class Likes extends BaseTimeEntity {

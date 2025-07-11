@@ -81,8 +81,15 @@ public class RecipeController {
 
     // 5. 레시피 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteRecipe(@PathVariable Long id) {
-        recipeService.deleteRecipe(id);
+    public ResponseEntity<ApiResponse<Void>> deleteRecipe(
+            @PathVariable Long id,
+            @AuthenticationPrincipal AuthUser authUser // 인증된 유저 정보 받기
+    ) {
+        User user = userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        recipeService.deleteRecipe(id, user); // user를 넘겨주기
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("레시피가 삭제되었습니다.", null));

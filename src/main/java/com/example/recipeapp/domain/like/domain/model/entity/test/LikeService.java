@@ -1,17 +1,13 @@
 package com.example.recipeapp.domain.like.domain.model.entity.test;
 
-import com.example.recipeapp.domain.dashboard.test.RecipeRepository;
 import com.example.recipeapp.domain.like.domain.model.entity.Likes;
-import com.example.recipeapp.domain.recipe.domain.model.Recipe;
+import com.example.recipeapp.domain.recipes.domain.model.Recipe;
+import com.example.recipeapp.domain.recipes.domain.repository.RecipeRepository;
 import com.example.recipeapp.domain.user.domain.model.User;
 import com.example.recipeapp.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor

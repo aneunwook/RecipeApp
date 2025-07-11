@@ -1,13 +1,12 @@
 package com.example.recipeapp.domain.like.domain.model.entity;
 
-import com.example.recipeapp.domain.recipe.domain.model.Recipe;
+import com.example.recipeapp.domain.recipes.domain.model.Recipe;
 import com.example.recipeapp.domain.user.domain.model.User;
 import com.example.recipeapp.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import static lombok.AccessLevel.PROTECTED;
 

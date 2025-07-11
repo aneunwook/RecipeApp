@@ -4,10 +4,10 @@ import com.example.recipeapp.domain.dashboard.controller.dto.CategoryBestRecipeR
 import com.example.recipeapp.domain.dashboard.controller.dto.DashboardResponseDto;
 import com.example.recipeapp.domain.dashboard.controller.dto.DashboardSummaryResponseDto;
 import com.example.recipeapp.domain.dashboard.repository.RecipeRepositoryCustom;
-import com.example.recipeapp.domain.dashboard.test.TestRecipeCategoryEnum;
 
 import com.example.recipeapp.domain.like.domain.model.entity.test.LikeRepository;
-import com.example.recipeapp.domain.recipe.domain.model.Recipe;
+import com.example.recipeapp.domain.recipes.domain.model.Recipe;
+import com.example.recipeapp.domain.recipes.domain.model.RecipeCategory;
 import com.example.recipeapp.global.exception.CustomException;
 import com.example.recipeapp.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -40,14 +40,14 @@ public class DashboardService {
         DashboardSummaryResponseDto summary = summary();//오늘 집계 사용
 
         //각 카테고리 베스트 레시피 1건씩 수집
-        List<CategoryBestRecipeResponseDto> bestRecipe = Arrays.stream(TestRecipeCategoryEnum.values()).map(this::categoryRecipe)
+        List<CategoryBestRecipeResponseDto> bestRecipe = Arrays.stream(RecipeCategory.values()).map(this::categoryRecipe)
                 .collect(Collectors.toList());
 
         return DashboardResponseDto.builder()
                 .totalRecipeCount(summary.getTotalRecipeCount())
                 .todayLikeCount(summary.getTodayLikeCount())
                 .todayNewRecipeCount(summary.getTodayRecipeCount())
-                .categories(Arrays.asList(TestRecipeCategoryEnum.values())) //배열 -> List 컬렉션 래핑
+                .categories(Arrays.asList(RecipeCategory.values())) //배열 -> List 컬렉션 래핑
                 .bestRecipe(bestRecipe)
                 .build();
 
@@ -61,7 +61,7 @@ public class DashboardService {
      * @param category
      * @return
      */
-    public CategoryBestRecipeResponseDto categoryRecipe(TestRecipeCategoryEnum category) {
+    public CategoryBestRecipeResponseDto categoryRecipe(RecipeCategory category) {
 
         Recipe recipe = recipeRepository.findTop1ByCategoryOrderByLikesDescCreatedAtDesc(category);
 

@@ -2,8 +2,7 @@ package com.example.recipeapp.domain.dashboard.controller;
 
 import com.example.recipeapp.domain.dashboard.controller.dto.*;
 import com.example.recipeapp.domain.dashboard.service.DashboardService;
-import com.example.recipeapp.domain.dashboard.test.TestRecipeCategoryEnum;
-import com.example.recipeapp.domain.recipe.domain.model.Recipe;
+import com.example.recipeapp.domain.recipes.domain.model.RecipeCategory;
 import com.example.recipeapp.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -47,7 +46,7 @@ public class DashboardController {
      */
     @GetMapping("/v1/{categories}")
     public ResponseEntity<ApiResponse<CategoryBestRecipeResponseDto>> categoryRecipe(
-            @PathVariable("categories") TestRecipeCategoryEnum category) {
+            @PathVariable("categories") RecipeCategory category) {
        CategoryBestRecipeResponseDto dto = dashboardService.categoryRecipe(category);
        return ResponseEntity.status(HttpStatus.OK).body(
                ApiResponse.success(category.getLabel() + "카테고리 베스트 레시피 조회 성공했습니다.",dto));

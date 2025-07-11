@@ -1,12 +1,16 @@
 package com.example.recipeapp.domain.user.service;
 
 import com.example.recipeapp.domain.auth.domain.model.AuthUser;
-import com.example.recipeapp.domain.auth.service.AuthService;
-import com.example.recipeapp.domain.user.controller.dto.request.PasswordChangeRequestDto;
+import com.example.recipeapp.domain.user.controller.dto.response.UserProfileResponseDto;
+import com.example.recipeapp.domain.user.controller.dto.response.UserRecipeResponseDto;
 import com.example.recipeapp.domain.user.controller.dto.response.UserResponseDto;
+import com.example.recipeapp.domain.user.domain.dto.UserProfileQueryDto;
+import com.example.recipeapp.domain.user.domain.dto.UserRecipeQueryDto;
 import com.example.recipeapp.domain.user.domain.model.User;
+import com.example.recipeapp.domain.user.domain.repository.UserQueryRepositoryImpl;
 import com.example.recipeapp.domain.user.domain.repository.UserRepository;
 import com.example.recipeapp.domain.user.service.dto.ChangePasswordDto;
+import com.example.recipeapp.domain.user.service.dto.UserProfileDto;
 import com.example.recipeapp.global.exception.CustomException;
 import com.example.recipeapp.global.exception.ErrorCode;
 import com.example.recipeapp.global.security.PasswordEncoder;
@@ -25,6 +29,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserQueryRepositoryImpl userQueryRepository;
 
     @Transactional(readOnly = true)
     public Page<UserResponseDto> getAllUsers(Pageable pageable) {
@@ -60,6 +65,24 @@ public class UserService {
         String newPassword = passwordEncoder.encode(request.getNewPassword());
 
         user.changePassword(newPassword);
+    }
+
+    public UserProfileResponseDto getCurrentUser(AuthUser authuser) {
+        User user = findByIdAndIsDeletedFalseOrThrow(authuser.getId());
+
+        UserProfileQueryDto queryDto = userQueryRepository.getUserInfo(user.getId());
+
+        UserProfileDto userProfile = UserProfileDto.from(queryDto);
+
+        return UserProfileResponseDto.from(user, userProfile);
+    }
+
+    public Page<UserRecipeResponseDto> getCurrentUserRecipe(AuthUser authuser, Pageable pageable) {
+        User user = findByIdAndIsDeletedFalseOrThrow(authuser.getId());
+
+        Page<UserRecipeQueryDto> queryDto = userQueryRepository.findRecipesByUserId(user.getId(), pageable);
+
+        return queryDto.map(UserRecipeResponseDto::from);
     }
 
     public User findByIdAndIsDeletedFalseOrThrow(Long userId) {

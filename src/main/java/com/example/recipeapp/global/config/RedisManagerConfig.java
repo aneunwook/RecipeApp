@@ -15,7 +15,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisManagerConfig {
 
     @Bean
-    public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+    public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
         // 키 직렬화 설정: 문자열 직렬화 사용
         RedisSerializationContext.SerializationPair<String> keySerializer = RedisSerializationContext
                 .SerializationPair

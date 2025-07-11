@@ -76,11 +76,15 @@ public class RecipeService {
     }
 
     // 삭제 (soft delete)
-    public void deleteRecipe(Long recipeId) {
+    public void deleteRecipe(Long recipeId, User currentUser) {
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RECIPE_NOT_FOUND));
 
-        recipeRepository.delete(recipe);
+        if (!recipe.getUser().getId().equals(currentUser.getId())) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_RECIPE_ACCESS);
+        }
+
+        recipe.softDelete(); // isDeleted = true, deletedAt = now()
     }
 
     // 신규 레시피

@@ -63,6 +63,11 @@ public class Recipe extends BaseTimeEntity {
         this.imageUrl = imageUrl;
     }
 
+    public void softDelete() {
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
+    }
+
     public void increaseLikes() {
         this.likes++;
     }

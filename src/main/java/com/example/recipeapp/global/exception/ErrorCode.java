@@ -24,7 +24,11 @@ public enum ErrorCode {
 
 
     // 게시글 관련 에러 정의
-    TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시글입니다.");
+    TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시글입니다."),
+
+    // 레시피 관련 에러 정의
+    RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 레시피입니다."),
+    UNAUTHORIZED_RECIPE_ACCESS(HttpStatus.FORBIDDEN, "해당 레시피에 대한 권한이 없습니다.");
 
     private final HttpStatus status;
     private final String message;

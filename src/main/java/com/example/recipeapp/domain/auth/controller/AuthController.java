@@ -10,15 +10,13 @@ import com.example.recipeapp.domain.auth.service.dto.request.SaveUserDto;
 import com.example.recipeapp.domain.auth.controller.dto.response.RegisterResponseDto;
 import com.example.recipeapp.domain.auth.service.AuthService;
 import com.example.recipeapp.global.response.ApiResponse;
+import com.example.recipeapp.global.security.jwt.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<RegisterResponseDto>> register(
@@ -64,6 +63,18 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(
+            @AuthenticationPrincipal AuthUser authUser,
+            @RequestHeader("Authorization") String bearerToken
+    ) {
 
+        String accessToken = jwtUtil.substringToken(bearerToken);
+        authService.logout(authUser.getId(), accessToken);
+        ApiResponse<Void> response = ApiResponse.success("로그아웃에 성공하였습니다.", null);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
+    }
 
 }

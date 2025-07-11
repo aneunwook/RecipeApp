@@ -3,12 +3,16 @@ package com.example.recipeapp.global.security.jwt;
 import com.example.recipeapp.domain.auth.domain.model.AuthUser;
 import com.example.recipeapp.domain.user.domain.model.UserRoleEnum;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,6 +29,7 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Override
     protected void doFilterInternal(
@@ -38,6 +43,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             String token = jwtUtil.substringToken(bearerToken);
             try {
+                if (Boolean.TRUE.equals(redisTemplate.hasKey("BL_" + token))) {
+                    throw new BadCredentialsException("블랙리스트에 등록된 토큰입니다.");
+                }
+
                 Claims claims = jwtUtil.extractClaims(token);
                 Long userId = Long.parseLong(claims.getSubject());
                 String nickname = claims.get("nickname", String.class);
@@ -56,8 +65,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            } catch (JwtException | IllegalArgumentException e) {
+                log.warn("유효하지 않은 JWT: {}", e.getMessage());
+                throw new AuthenticationCredentialsNotFoundException("유효하지 않은 토큰입니다.", e);
+            } catch (BadCredentialsException e) {
+                log.warn("인증 실패: {}", e.getMessage());
+                throw e;
             } catch (Exception e) {
-                log.warn("JWT 인증 실패: {}", e.getMessage());
+                log.warn("알 수 없는 인증 오류 발생: {}", e.getMessage());
+                throw new AuthenticationCredentialsNotFoundException("알 수 없는 인증 오류가 발생했습니다.", e);
             }
         }
 

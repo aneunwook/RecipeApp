@@ -9,5 +9,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class LikeCountResponseDto {
     private Long recipeId;
-    private Long likesCount;
+    private int likesCount;
 }

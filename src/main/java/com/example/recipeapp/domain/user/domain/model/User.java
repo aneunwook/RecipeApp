@@ -47,4 +47,8 @@ public class User extends BaseTimeEntity {
         this.deletedAt = LocalDateTime.now();
     }
 
+    public void changePassword(String password){
+        this.password = password;
+    }
+
 }

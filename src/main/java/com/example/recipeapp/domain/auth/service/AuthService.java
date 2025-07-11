@@ -11,10 +11,16 @@ import com.example.recipeapp.global.exception.CustomException;
 import com.example.recipeapp.global.exception.ErrorCode;
 import com.example.recipeapp.global.security.PasswordEncoder;
 import com.example.recipeapp.global.security.jwt.JwtUtil;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.concurrent.TimeUnit;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -23,6 +29,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final RedisTemplate<String, String> redisTemplate;
 
     public RegisterResponseDto register(SaveUserDto saveUserDto) {
 
@@ -76,7 +83,15 @@ public class AuthService {
         withdrawUser.delete();
     }
 
+    public void logout(Long userId, String accessToken) {
 
+        Claims claims = jwtUtil.extractClaims(accessToken);
+        long expiration = claims.getExpiration().getTime() - System.currentTimeMillis();
+
+        redisTemplate.opsForValue().set("BL_" + accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
+        log.info("토큰 블랙리스트 등록 완료: {}", accessToken);
+
+    }
 
     private void checkDuplicatesOrThrow(String nickname, String email) {
 

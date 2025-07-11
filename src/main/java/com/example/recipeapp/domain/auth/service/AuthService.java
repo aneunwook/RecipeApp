@@ -12,8 +12,8 @@ import com.example.recipeapp.global.exception.ErrorCode;
 import com.example.recipeapp.global.security.PasswordEncoder;
 import com.example.recipeapp.global.security.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class AuthService {
 
@@ -31,16 +30,29 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final RedisTemplate<String, String> redisTemplate;
 
+
+    public AuthService (
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil,
+            @Qualifier("redisStringTemplate") RedisTemplate<String, String> redisTemplate
+    ) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+        this.redisTemplate = redisTemplate;
+    }
+
     public RegisterResponseDto register(SaveUserDto saveUserDto) {
 
         checkDuplicatesOrThrow(saveUserDto.getNickname(), saveUserDto.getEmail());
 
         User user = User.builder()
-                        .nickname(saveUserDto.getNickname())
-                        .username(saveUserDto.getUsername())
-                        .email(saveUserDto.getEmail())
-                        .password(passwordEncoder.encode(saveUserDto.getPassword()))
-                        .build();
+                .nickname(saveUserDto.getNickname())
+                .username(saveUserDto.getUsername())
+                .email(saveUserDto.getEmail())
+                .password(passwordEncoder.encode(saveUserDto.getPassword()))
+                .build();
 
         User savedUser = userRepository.save(user);
 
@@ -50,18 +62,18 @@ public class AuthService {
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
 
         User loginUser = userRepository.findByNicknameAndIsDeletedFalse(loginRequestDto.getNickname())
-                                       .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), loginUser.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
         String token = jwtUtil.createToken(
-            loginUser.getId(),
-            loginUser.getNickname(),
-            loginUser.getUsername(),
-            loginUser.getEmail(),
-            loginUser.getRole()
+                loginUser.getId(),
+                loginUser.getNickname(),
+                loginUser.getUsername(),
+                loginUser.getEmail(),
+                loginUser.getRole()
         );
 
         return new LoginResponseDto(token);
@@ -70,7 +82,7 @@ public class AuthService {
     public void withdraw(DeleteUserDto deleteUserDto) {
 
         User withdrawUser = userRepository.findById(deleteUserDto.getUserId())
-                                  .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (withdrawUser.getIsDeleted()) {
             throw new CustomException(ErrorCode.ALREADY_WITHDRAW_USER);

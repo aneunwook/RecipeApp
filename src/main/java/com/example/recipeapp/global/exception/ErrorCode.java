@@ -28,7 +28,8 @@ public enum ErrorCode {
 
     // 레시피 관련 에러 정의
     RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 레시피입니다."),
-    UNAUTHORIZED_RECIPE_ACCESS(HttpStatus.FORBIDDEN, "해당 레시피에 대한 권한이 없습니다.");
+    UNAUTHORIZED_RECIPE_ACCESS(HttpStatus.FORBIDDEN, "해당 레시피에 대한 권한이 없습니다."),
+    NO_RECIPE_FOUND_TODAY(HttpStatus.NOT_FOUND, "오늘 등록된 레시피가 없습니다.");
 
     private final HttpStatus status;
     private final String message;

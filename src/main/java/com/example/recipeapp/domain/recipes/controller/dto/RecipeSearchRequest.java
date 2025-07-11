@@ -2,11 +2,12 @@ package com.example.recipeapp.domain.recipes.controller.dto;
 
 import com.example.recipeapp.domain.recipes.domain.model.RecipeCategory;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-public class RecipeCreateRequest {
+@NoArgsConstructor
+public class RecipeSearchRequest {
     private String title;
-    private String content;
     private RecipeCategory category;
-    private String imageUrl;
+    private String nickname;
 }

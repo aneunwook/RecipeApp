@@ -1,6 +1,7 @@
 package com.example.recipeapp.domain.recipes.domain.model;
 import com.example.recipeapp.domain.user.domain.model.User;
 import com.example.recipeapp.global.entity.BaseTimeEntity;
+import com.example.recipeapp.domain.recipes.domain.model.RecipeCategory;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -35,8 +36,9 @@ public class Recipe extends BaseTimeEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String category;
+    private RecipeCategory category;
 
     private String imageUrl;
 
@@ -46,7 +48,7 @@ public class Recipe extends BaseTimeEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    public Recipe(User user, String title, String content, String category, String imageUrl) {
+    public Recipe(User user, String title, String content, RecipeCategory category, String imageUrl) {
         this.user = user;
         this.title = title;
         this.content = content;
@@ -54,11 +56,16 @@ public class Recipe extends BaseTimeEntity {
         this.imageUrl = imageUrl;
     }
 
-    public void update(String title, String content, String category, String imageUrl) {
+    public void update(String title, String content, RecipeCategory category, String imageUrl) {
         this.title = title;
         this.content = content;
         this.category = category;
         this.imageUrl = imageUrl;
+    }
+
+    public void softDelete() {
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
     }
 
     public void increaseLikes() {

@@ -2,7 +2,11 @@ package com.example.recipeapp.domain.user.domain.repository;
 
 import com.example.recipeapp.domain.user.domain.dto.UserProfileQueryDto;
 import com.example.recipeapp.domain.user.domain.dto.UserRecipeQueryDto;
+import com.example.recipeapp.domain.user.domain.model.QUser;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,32 +28,22 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
 
     @Override
     public UserProfileQueryDto getUserInfo(Long userId) {
-        // 내가 작성한 레시피 수
-        Long recipeCount = jpaQueryFactory
-                .select(recipe.count())
-                .from(recipe)
-                .where(recipe.user.id.eq(userId))
-                .fetchOne();
-
-        // 내가 작성한 레시피들이 받은 총 좋아요 수
-        Integer totalLikes = jpaQueryFactory
-                .select(recipe.likes.sum().coalesce(0))
-                .from(recipe)
-                .where(recipe.user.id.eq(userId))
-                .fetchOne();
-
-        // 내가 좋아요 한 레시피 수
-        Long likedRecipeCount = jpaQueryFactory
-                .select(likes.count())
+        // 좋아요 누른 레시피 수는 서브쿼리로 분리
+        JPQLQuery<Long> likedRecipeCount = JPAExpressions
+                .select(likes.id.countDistinct())
                 .from(likes)
-                .where(likes.user.id.eq(userId))
-                .fetchOne();
+                .where(likes.user.id.eq(userId));
 
-        return new UserProfileQueryDto(
-                recipeCount != null ? recipeCount.intValue() : 0,
-                totalLikes != null ? totalLikes.intValue() : 0,
-                likedRecipeCount != null ? likedRecipeCount.intValue() : 0
-        );
+        return jpaQueryFactory
+                .select(Projections.constructor(
+                        UserProfileQueryDto.class,
+                        recipe.id.countDistinct().intValue(), // 작성한 레시피 수
+                        recipe.likes.sum().coalesce(0).intValue(), // 받은 총 좋아요 수
+                        likedRecipeCount // 좋아요 누른 레시피 수
+                ))
+                .from(recipe)
+                .where(recipe.user.id.eq(userId))
+                .fetchOne();
     }
 
     // 로그인 한 사용자의 레시피 조회(정보 포함)

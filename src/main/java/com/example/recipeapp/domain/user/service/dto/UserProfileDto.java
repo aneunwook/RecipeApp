@@ -10,7 +10,7 @@ public class UserProfileDto {
 
     private int recipeCount;
     private int totalLikes;
-    private int likedRecipeCount;
+    private Long likedRecipeCount;
 
     public static UserProfileDto from(UserProfileQueryDto queryDto){
         return UserProfileDto.builder()

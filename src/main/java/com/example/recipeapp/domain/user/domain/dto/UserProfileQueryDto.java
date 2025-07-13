@@ -9,6 +9,6 @@ public class UserProfileQueryDto {
 
     private int recipeCount;
     private int totalLikes;
-    private int likedRecipeCount;
+    private Long likedRecipeCount;
 
 }

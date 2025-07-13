@@ -21,7 +21,7 @@ public class UserProfileResponseDto {
     private String email;
     private int recipeCount;
     private int totalLikes;
-    private int likedRecipeCount;
+    private Long likedRecipeCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

@@ -1,10 +1,16 @@
 package com.example.recipeapp.domain.user.service;
 
 import com.example.recipeapp.domain.auth.domain.model.AuthUser;
+import com.example.recipeapp.domain.auth.service.AuthService;
+import com.example.recipeapp.domain.user.controller.dto.request.PasswordChangeRequestDto;
 import com.example.recipeapp.domain.user.controller.dto.response.UserResponseDto;
+import com.example.recipeapp.domain.user.domain.dto.UserProfileQueryDto;
+import com.example.recipeapp.domain.user.domain.dto.UserRecipeQueryDto;
 import com.example.recipeapp.domain.user.domain.model.User;
+import com.example.recipeapp.domain.user.domain.repository.UserQueryRepositoryImpl;
 import com.example.recipeapp.domain.user.domain.repository.UserRepository;
 import com.example.recipeapp.domain.user.service.dto.ChangePasswordDto;
+import com.example.recipeapp.domain.user.service.dto.UserProfileDto;
 import com.example.recipeapp.global.exception.CustomException;
 import com.example.recipeapp.global.exception.ErrorCode;
 import com.example.recipeapp.global.security.PasswordEncoder;
@@ -23,6 +29,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserQueryRepositoryImpl userQueryRepository;
 
     @Transactional(readOnly = true)
     public Page<UserResponseDto> getAllUsers(Pageable pageable) {
@@ -58,6 +65,30 @@ public class UserService {
         String newPassword = passwordEncoder.encode(request.getNewPassword());
 
         user.changePassword(newPassword);
+    }
+
+    // 현재 로그인한 사용자의 프로필 요약 정보 조회
+    public UserProfileResponseDto getCurrentUser(AuthUser authuser) {
+        User user = findByIdAndIsDeletedFalseOrThrow(authuser.getId());
+
+        // 사용자 ID로 작성한 레시피 수, 좋아요 받은 수, 좋아요를 한 수를 조회하는 쿼리 실행
+        UserProfileQueryDto queryDto = userQueryRepository.getUserInfo(user.getId());
+
+        // 쿼리 결과를 도메인용 DTO로 변환
+        UserProfileDto userProfile = UserProfileDto.from(queryDto);
+
+        return UserProfileResponseDto.from(user, userProfile);
+    }
+
+    //현재 로그인한 사용자가 작성한 레시피 목록 조회 (페이징)
+    public Page<UserRecipeResponseDto> getCurrentUserRecipe(AuthUser authuser, Pageable pageable) {
+        User user = findByIdAndIsDeletedFalseOrThrow(authuser.getId());
+
+        // 사용자 ID로 작성한 레시피들을 페이징 쿼리로 조회
+        Page<UserRecipeQueryDto> queryDto = userQueryRepository.findRecipesByUserId(user.getId(), pageable);
+
+        // 쿼리 결과 DTO들을 응답 DTO로 변환하여 반환
+        return queryDto.map(UserRecipeResponseDto::from);
     }
 
     public User findByIdAndIsDeletedFalseOrThrow(Long userId) {

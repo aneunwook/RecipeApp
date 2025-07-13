@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.Cacheable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -26,6 +27,7 @@ public class LikeService {
 
 
     //좋아요 등록 (좋아요가 눌리지 않은 상태만 가능)
+    @Transactional
     @CacheEvict(value = "likeCount", key = "#recipeId") //캐시무효화
     public LikeResponseDto registerLike (Long userId, Long recipeId) {
 
@@ -44,11 +46,13 @@ public class LikeService {
         Likes like = new Likes(user, recipe);
         likeRepository.save(like);
 
-        long likeCount = likeRepository.countByRecipe(recipe);
+        // 레시피 좋아요 수 증가, 저장
+        recipe.increaseLikes();
+        recipeRepository.save(recipe);
 
         return LikeResponseDto.builder()
                 .recipeId(recipeId)
-                .likesCount(likeCount)
+                .likesCount(recipe.getLikes())
                 .liked(true) //등록이므로 true
                 .build();
 
@@ -56,6 +60,7 @@ public class LikeService {
 
 
     //좋아요 취소 (좋아요가 눌려있는 상태만 가능)
+    @Transactional
     @CacheEvict(value = "likeCount", key = "#recipeId")  //캐시무효화
     public LikeResponseDto cancelLike (Long userId, Long recipeId) {
 
@@ -69,14 +74,13 @@ public class LikeService {
         Likes like = likeRepository.findByUserAndRecipe(user, recipe)
                 .orElseThrow(() -> new CustomException(ErrorCode.LIKE_NOT_FOUND)); //값이 존재하지 않아 꺼낼 수 없을 때 사용하는 예외클래스
 
-        // 좋아요 삭제
-        likeRepository.delete(like);
-
-        long likeCount = likeRepository.countByRecipe(recipe);
+        // 좋아요 수 감소, 저장
+        recipe.decreaseLikes();
+        recipeRepository.save(recipe);
 
         return LikeResponseDto.builder()
                 .recipeId(recipeId)
-                .likesCount(likeCount)
+                .likesCount(recipe.getLikes())
                 .liked(false) // 취소이므로 false
                 .build();
 
@@ -84,28 +88,32 @@ public class LikeService {
 
 
     //좋아요 수 조회
+    @Transactional(readOnly = true)
     public LikeCountResponseDto countLikes (Long recipeId) {
 
         Recipe recipe = recipeRepository.findById(recipeId)  //게시글 존재 여부 확인
                 .orElseThrow(() -> new CustomException(ErrorCode.RECIPE_NOT_FOUND));
 
-        long likeCount = likeRepository.countByRecipe(recipe);
-
         return LikeCountResponseDto.builder()
                 .recipeId(recipeId)
-                .likesCount(likeCount)
+                .likesCount(recipe.getLikes())
                 .build();
 
     }
 
     //좋아요 수 조회 (캐시 적용)
+    @Transactional(readOnly = true)
     @Cacheable(value = "likeCount", key = "#recipeId")
     public LikeCountResponseDto countLikesV2(Long recipeId) {
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RECIPE_NOT_FOUND));
 
-        long count = likeRepository.countByRecipe(recipe);
-        return new LikeCountResponseDto(recipeId, count);
+
+        return LikeCountResponseDto.builder()
+                .recipeId(recipeId)
+                .likesCount(recipe.getLikes())
+                .build();
+
     }
 
 }

@@ -46,7 +46,7 @@ public class LikeController {
     }
 
     // V2 (캐시적용) 좋아요 개수 조회 (로그인 사용자만 가능)
-    @GetMapping("/api/v2/recipes/{recipeId}/likes/count")
+    @GetMapping("/v2/recipes/{recipeId}/likes/count")
     public ResponseEntity<ApiResponse<LikeCountResponseDto>> countLikesV2(@PathVariable Long recipeId) {
 
         LikeCountResponseDto response = likeService.countLikesV2(recipeId);

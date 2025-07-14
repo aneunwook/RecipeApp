@@ -1,8 +1,8 @@
 package com.example.recipeapp.domain.user.service;
 
 import com.example.recipeapp.domain.auth.domain.model.AuthUser;
-import com.example.recipeapp.domain.auth.service.AuthService;
-import com.example.recipeapp.domain.user.controller.dto.request.PasswordChangeRequestDto;
+import com.example.recipeapp.domain.user.controller.dto.response.UserProfileResponseDto;
+import com.example.recipeapp.domain.user.controller.dto.response.UserRecipeResponseDto;
 import com.example.recipeapp.domain.user.controller.dto.response.UserResponseDto;
 import com.example.recipeapp.domain.user.domain.dto.UserProfileQueryDto;
 import com.example.recipeapp.domain.user.domain.dto.UserRecipeQueryDto;

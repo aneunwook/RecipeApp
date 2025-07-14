@@ -22,4 +22,7 @@ public interface LikeRepository extends JpaRepository<Likes, Long> {
     //대시보드 -> 오늘의 좋아요수 카운팅
     Long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 
+    //Init 데이터용
+    boolean existsByUserAndRecipe(User user, Recipe recipe);
+
 }

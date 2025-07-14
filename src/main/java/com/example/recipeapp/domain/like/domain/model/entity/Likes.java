@@ -30,7 +30,6 @@ public class Likes extends BaseTimeEntity {
     @JoinColumn(name = "recipe_id", nullable = false)
     private Recipe recipe; // 좋아요 대상 게시글
 
-
     public Likes(User user, Recipe recipe) {
         this.user = user;
         this.recipe = recipe;

@@ -1,5 +1,7 @@
 //package com.example.recipeapp;
 //
+//import com.example.recipeapp.domain.like.domain.model.entity.Likes;
+//import com.example.recipeapp.domain.like.domain.repository.LikeRepository;
 //import com.example.recipeapp.domain.recipes.domain.model.Recipe;
 //import com.example.recipeapp.domain.recipes.domain.model.RecipeCategory;
 //import com.example.recipeapp.domain.recipes.domain.repository.RecipeRepository;
@@ -13,6 +15,7 @@
 //import org.springframework.stereotype.Component;
 //import org.springframework.transaction.annotation.Transactional;
 //
+//import java.time.LocalDateTime;
 //import java.util.List;
 //import java.util.Random;
 //
@@ -23,6 +26,7 @@
 //    private final UserService userService;
 //    private final UserRepository userRepository;
 //    private final RecipeRepository recipeRepository;
+//    private final LikeRepository likeRepository;
 //
 //    private final Random random = new Random(); // ✅ Random 객체 추가
 //
@@ -31,10 +35,13 @@
 //    public void init() {
 //        initUsers();
 //        initRecipes();
+//        List<User> userList = userRepository.findAll();
+//        List<Recipe> recipeList = recipeRepository.findAll();
+//        initLikes(recipeList, userList);
 //    }
 //
 //    public void initUsers() {
-//        for (int i = 1; i <= 500; i++) {
+//        for (int i = 1; i <= 5000; i++) {
 //            String username = "user" + i;
 //            String nickname = "nickname" + i;
 //            String email = "user" + i + "@example.com";
@@ -56,7 +63,7 @@
 //        List<User> userList = userRepository.findAll();
 //        RecipeCategory[] category = RecipeCategory.values();
 //
-//        for (int i = 1; i <= 500; i++) {
+//        for (int i = 1; i <= 50000; i++) {
 //            String title = "title" + i;
 //            String content = "content" + i;
 //            String imageUrl = "http://example.com/image" + i + ".jpg";
@@ -78,6 +85,21 @@
 //            }
 //
 //            recipeRepository.save(recipe); //  저장
+//        }
+//    }
+//
+//    public void initLikes(List<Recipe> recipeList, List<User> userList) {
+//        LocalDateTime now = LocalDateTime.now();
+//        for (int i = 0; i <= 50000; i++) {
+//            User randomUser = userList.get(random.nextInt(userList.size()));
+//            Recipe randomRecipe = recipeList.get(random.nextInt(recipeList.size()));
+//
+//            if (likeRepository.existsByUserAndRecipe(randomUser, randomRecipe)) continue;
+//
+//
+//            Likes like = new Likes(randomUser,randomRecipe);
+//
+//            likeRepository.save(like);
 //        }
 //    }
 //}

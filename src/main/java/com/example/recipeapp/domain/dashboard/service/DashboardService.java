@@ -37,7 +37,6 @@ public class DashboardService {
 
         DashboardSummaryResponseDto summaryV1 = summaryV1();//오늘 집계 사용
 
-
         return DashboardResponseDto.builder()
                 .totalRecipeCount(summaryV1.getTotalRecipeCount())
                 .todayLikeCount(summaryV1.getTodayLikeCount())
@@ -47,7 +46,7 @@ public class DashboardService {
 
     }
     //캐시 무효화 캐시 사용
-    @Cacheable(value = "dashboardCache", key = "dashboards", cacheManager = "redisCacheManager")
+    @Cacheable(value = "dashboardCache", key = "'dashboards'", cacheManager = "redisCacheManager")
     public DashboardResponseDto dashboardsV2() {
 
         DashboardSummaryResponseDto summaryV2 = summaryV2();//오늘 집계 사용
@@ -123,7 +122,6 @@ public class DashboardService {
         Long totalRecipeCount = recipeRepository.count();
         Long todayRecipeCount = recipeRepository.countByCreatedAtBetween(start, end);
         Long todayLikeCount = likeRepository.countByCreatedAtBetween(start, end);
-
         return DashboardSummaryResponseDto.builder()
                 .totalRecipeCount(totalRecipeCount)
                 .todayRecipeCount(todayRecipeCount)
@@ -132,7 +130,7 @@ public class DashboardService {
 
     }
 
-    @Cacheable(value = "summaryCache", cacheManager = "redisCacheManager")
+    @Cacheable(value = "summaryCache", key = "'summary'", cacheManager = "redisCacheManager")
     public DashboardSummaryResponseDto summaryV2() {
 
         //당일 날짜 계산하기

@@ -95,4 +95,9 @@ public class UserService {
         return userRepository.findByIdAndIsDeletedFalse(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
+
+    // InitDat 저장용 으로 만든 메서드임
+    public User save(User user) {
+        return userRepository.save(user);
+    }
 }

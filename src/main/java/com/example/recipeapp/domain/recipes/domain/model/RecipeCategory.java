@@ -15,8 +15,8 @@ public enum RecipeCategory {
         this.label = label;
     }
 
-    @JsonValue
-    public String getLabel() {
+    @JsonValue // JSON 직렬화 시 "한식" 등 한글 문자열이 그대로 나가도록 설정
+    public String getLabel(){
         return label;
     }
 }

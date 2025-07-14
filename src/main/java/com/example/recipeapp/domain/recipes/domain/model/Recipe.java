@@ -1,4 +1,5 @@
 package com.example.recipeapp.domain.recipes.domain.model;
+
 import com.example.recipeapp.domain.user.domain.model.User;
 import com.example.recipeapp.global.entity.BaseTimeEntity;
 import com.example.recipeapp.domain.recipes.domain.model.RecipeCategory;
@@ -74,5 +75,8 @@ public class Recipe extends BaseTimeEntity {
 
     public void decreaseLikes() {
         this.likes = Math.max(0, this.likes - 1);
+    }
+
+    public void minusLike() {
     }
 }

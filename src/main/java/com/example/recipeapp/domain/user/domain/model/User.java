@@ -18,10 +18,11 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 10)
+    @Column(nullable = false, unique = true, length = 200)
     private String nickname;
 
-    @Column(nullable = false,length = 10)
+    // dh -> InitData 를 위해 임의로 늘려놓음
+    @Column(nullable = false,length = 200)
     private String username;
 
     @Column(nullable = false, unique = true)
@@ -40,6 +41,7 @@ public class User extends BaseTimeEntity {
     private Boolean isDeleted = false;
 
     private LocalDateTime deletedAt;
+
 
     // soft delete
     public void delete() {

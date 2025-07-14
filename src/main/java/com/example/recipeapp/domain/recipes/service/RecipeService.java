@@ -9,7 +9,6 @@ import com.example.recipeapp.domain.recipes.domain.repository.RecipeRepository;
 import com.example.recipeapp.domain.user.domain.model.User;
 import com.example.recipeapp.global.exception.CustomException;
 import com.example.recipeapp.global.exception.ErrorCode;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

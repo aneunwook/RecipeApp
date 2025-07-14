@@ -16,8 +16,11 @@ public class CacheConfig {
     @Primary
     public CacheManager cacheManager() {
         //Spring에서 제공하는 기본 In-Memory Cache 매니저
-        return new ConcurrentMapCacheManager("likeCount"); //"likeCount"라는 이름의 캐시 공간을 생성
+        return new ConcurrentMapCacheManager("likeCount","categoryCache"); //"likeCount"라는 이름의 캐시 공간을 생성
     }
+
+
+
 
 
 }

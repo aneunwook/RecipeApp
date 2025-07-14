@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.recipeapp.domain.recipes.domain.model.Recipe;
 import com.example.recipeapp.domain.user.domain.model.User;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface LikeRepository extends JpaRepository<Likes, Long> {
@@ -18,5 +19,10 @@ public interface LikeRepository extends JpaRepository<Likes, Long> {
 
     //좋아요 삭제
     void deleteByUserAndRecipe(User user, Recipe recipe);
+    //대시보드 -> 오늘의 좋아요수 카운팅
+    Long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
+    //Init 데이터용
+    boolean existsByUserAndRecipe(User user, Recipe recipe);
 
 }

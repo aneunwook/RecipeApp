@@ -1,17 +1,19 @@
 package com.example.recipeapp.domain.recipes.service;
 
-import com.example.recipeapp.domain.recipes.controller.dto.RecipeCreateRequest;
-import com.example.recipeapp.domain.recipes.controller.dto.RecipeResponse;
-import com.example.recipeapp.domain.recipes.controller.dto.RecipeSummaryResponse;
-import com.example.recipeapp.domain.recipes.controller.dto.RecipeUpdateRequest;
+import com.example.recipeapp.domain.recipes.cache.KeywordCounter;
+import com.example.recipeapp.domain.recipes.controller.dto.*;
 import com.example.recipeapp.domain.recipes.domain.model.Recipe;
+import com.example.recipeapp.domain.recipes.domain.model.RecipeCategory;
 import com.example.recipeapp.domain.recipes.domain.repository.RecipeRepository;
 import com.example.recipeapp.domain.user.domain.model.User;
 import com.example.recipeapp.global.exception.CustomException;
 import com.example.recipeapp.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class RecipeService {
     private final RecipeRepository recipeRepository;
+    private final KeywordCounter keywordCounter;
 
     // 작성
     public RecipeResponse createRecipe(RecipeCreateRequest request, User user) {
@@ -110,5 +113,29 @@ public class RecipeService {
         return recipeRepository.findTopByCategoryAndCreatedAtBetweenOrderByLikesDesc(category, start, end)
                 .map(RecipeResponse::new)
                 .orElseThrow(() -> new CustomException(ErrorCode.NO_RECIPE_FOUND_TODAY));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<RecipeResponse> searchRecipes(String keyword, Pageable pageable) {
+        if (isValidKeyword(keyword)) {
+            keywordCounter.record(keyword);
+        }
+
+        return recipeRepository.search(keyword, pageable);
+    }
+
+    public List<PopularRecipe> topKeywords(int limit) {
+        List<String> keywords = keywordCounter.getTopKeywords(limit);
+
+        return keywords.stream()
+                .map(keyword -> {
+                    List<RecipeResponse> recipes = recipeRepository.searchTopNByKeyword(keyword, 5)
+                            .stream().map(RecipeResponse::from).toList();
+                    return new PopularRecipe(keyword, recipes);
+                }).toList();
+    }
+
+    private boolean isValidKeyword(String keyword) {
+        return StringUtils.hasText(keyword);
     }
 }

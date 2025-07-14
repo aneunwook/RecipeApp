@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface RecipeRepository extends JpaRepository<Recipe, Long> {
+public interface RecipeRepository extends JpaRepository<Recipe, Long>, RecipeRepositorySearchCustom {
     List<Recipe> findAllByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 
     Optional<Recipe> findTopByCategoryAndCreatedAtBetweenOrderByLikesDesc(String category, LocalDateTime start, LocalDateTime end);

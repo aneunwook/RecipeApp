@@ -1,16 +1,18 @@
 package com.example.recipeapp.domain.recipes.controller;
 
-import com.example.recipeapp.domain.recipes.controller.dto.RecipeSummaryResponse;
+import com.example.recipeapp.domain.recipes.controller.dto.*;
 import com.example.recipeapp.domain.recipes.domain.model.Recipe;
+import com.example.recipeapp.domain.recipes.domain.model.RecipeCategory;
 import com.example.recipeapp.domain.recipes.domain.repository.RecipeRepository;
 import com.example.recipeapp.global.exception.CustomException;
 import com.example.recipeapp.global.exception.ErrorCode;
 import com.example.recipeapp.global.response.ApiResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.example.recipeapp.domain.auth.domain.model.AuthUser;
-import com.example.recipeapp.domain.recipes.controller.dto.RecipeCreateRequest;
-import com.example.recipeapp.domain.recipes.controller.dto.RecipeResponse;
-import com.example.recipeapp.domain.recipes.controller.dto.RecipeUpdateRequest;
 import com.example.recipeapp.domain.recipes.service.RecipeService;
 import com.example.recipeapp.domain.user.domain.model.User;
 import com.example.recipeapp.domain.user.domain.repository.UserRepository;
@@ -102,5 +104,23 @@ public class RecipeController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success("오늘 등록된 신규 레시피 목록입니다.", todayRecipes));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<Page<RecipeResponse>>> searchRecipes(
+            @RequestParam(required = false) String keyword,
+            @PageableDefault(size = 10) Pageable pageable
+    ){
+        Page<RecipeResponse> search = recipeService.searchRecipes(keyword, pageable);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("레시피 검색에 성공했습니다", search));
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<ApiResponse<List<PopularRecipe>>> topKeywords (@RequestParam(defaultValue = "10") int limit)
+    {
+        List<PopularRecipe> top = recipeService.topKeywords(limit);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("인기 키워드 검색에 성공했습니다", top));
     }
 }

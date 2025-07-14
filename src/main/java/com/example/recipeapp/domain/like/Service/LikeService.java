@@ -74,6 +74,8 @@ public class LikeService {
         Likes like = likeRepository.findByUserAndRecipe(user, recipe)
                 .orElseThrow(() -> new CustomException(ErrorCode.LIKE_NOT_FOUND)); //값이 존재하지 않아 꺼낼 수 없을 때 사용하는 예외클래스
 
+        likeRepository.delete(like);
+
         // 좋아요 수 감소, 저장
         recipe.decreaseLikes();
         recipeRepository.save(recipe);

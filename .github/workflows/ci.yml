@@ -1,29 +1,36 @@
-name: Continuous Integration
+# ---------------------------
+# 워크플로우 이름
+name: CI - Build & Test
 
+# ---------------------------
+# 언제 워크플로우를 실행할지 지정
 on:
   pull_request:
-    branches:
-      - dev
+    branches: [ main, dev ]   # main/dev/feature 브랜치로 PR 생성/수정 시 자동 실행
+  push:
+    branches: [ main, dev ]                 # main/dev 브랜치에 push 발생 시 자동 실행
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest   # 깃허브에서 제공하는 최신 Ubuntu 리눅스 서버에서 실행
 
     steps:
+      # ---------------------------
+      # 1. 내 코드 내려받기
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
+      # ---------------------------
+      # 2. Java 17 환경 구성 (temurin은 오라클 무료 JDK)
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'gradle'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
-
-      - name: Gradle Build Cache
+      # ---------------------------
+      # 3. Gradle 의존성 캐시(=빌드속도↑, 네트워크↓)
+      - name: Cache Gradle dependencies
         uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
@@ -31,8 +38,25 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Run tests with Gradle
-        run: ./gradlew test --stacktrace --info --build-cache
+      # ---------------------------
+      # 4. gradlew 실행 권한 부여(유닉스 환경에서는 필수)
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew build --stacktrace --info --build-cache
+      # ---------------------------
+      # 5. 테스트 코드 전부 실행(JUnit 기준)
+      - name: Run Tests
+        run: ./gradlew test --info --build-cache
+
+      # ---------------------------
+      # 6. 전체 빌드(JAR 패키징까지 수행)
+      - name: Build
+        run: ./gradlew build --info --build-cache
+
+      # ---------------------------
+      # 7. (선택) 빌드된 JAR 파일을 Github에 산출물로 업로드
+      - name: Upload Jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: build/libs/*.jar   # build/libs 폴더의 모든 jar 파일 업로드

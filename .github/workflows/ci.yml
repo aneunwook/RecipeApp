@@ -3,7 +3,7 @@ name: Continuous Integration
 on:
   pull_request:
     branches:
-      - dev   # dev 브랜치 기준 PR만 감지(원하면 main으로 바꿔도 됨)
+      - dev
 
 jobs:
   build:
@@ -23,6 +23,16 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Build & Test
-        run: ./gradlew clean build --stacktrace --info --build-cache
-        continue-on-error: true
+      - name: Gradle Build Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Run tests with Gradle
+        run: ./gradlew test --stacktrace --info --build-cache
+
+      - name: Build with Gradle
+        run: ./gradlew build --stacktrace --info --build-cache

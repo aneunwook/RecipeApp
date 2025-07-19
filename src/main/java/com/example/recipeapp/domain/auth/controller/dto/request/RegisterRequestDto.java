@@ -4,9 +4,15 @@ import com.example.recipeapp.domain.auth.service.dto.request.SaveUserDto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@AllArgsConstructor // 생성자 자동 생성
+@NoArgsConstructor  // (테스트/직렬화 등용, 선택)
+@Builder
 public class RegisterRequestDto {
 
     @NotBlank

@@ -2,9 +2,7 @@ package com.example.recipeapp.domain.recipes.domain.repository;
 
 import com.example.recipeapp.domain.recipes.controller.dto.RecipeResponse;
 import com.example.recipeapp.domain.recipes.domain.model.Recipe;
-import com.example.recipeapp.domain.recipes.domain.model.RecipeCategory;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
